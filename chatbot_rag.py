@@ -14,7 +14,7 @@ from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
 load_dotenv()
 
-st.title("Chatbot")
+st.title("PKP Baza Wiedzy")
 
 # initialize pinecone database
 pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
@@ -31,7 +31,7 @@ vector_store = PineconeVectorStore(index=index, embedding=embeddings)
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-    st.session_state.messages.append(SystemMessage("You are an assistant for question-answering tasks. "))
+    st.session_state.messages.append(SystemMessage("Jesteś asystentem, którego zadaniem jest odpowiadanie na pytania. "))
 
 # display chat messages from history on app rerun
 for message in st.session_state.messages:
@@ -43,7 +43,7 @@ for message in st.session_state.messages:
             st.markdown(message.content)
 
 # create the bar where we can type messages
-prompt = st.chat_input("How are you?")
+prompt = st.chat_input("Jak mogę Ci pomóc")
 
 # did the user submit a prompt?
 if prompt:
@@ -70,11 +70,10 @@ if prompt:
     docs_text = "".join(d.page_content for d in docs)
 
     # creating the system prompt
-    system_prompt = """You are an assistant for question-answering tasks. 
-    Use the following pieces of retrieved context to answer the question. 
-    If you don't know the answer, just say that you don't know. 
-    Use three sentences maximum and keep the answer concise.
-    Context: {context}:"""
+    system_prompt = """Jesteś asystentem, którego zadaniem jest odpowiadanie na pytania. 
+    Skorzystaj z poniższych fragmentów pobranego kontekstu, aby udzielić odpowiedzi. Jeśli nie znasz odpowiedzi, 
+    napisz, że nie wiesz; odpowiedź powinna być zwięzła i nie 
+    przekraczać trzech zdań. Kontekst: {context}"""
 
     # Populate the system prompt with the retrieved context
     system_prompt_fmt = system_prompt.format(context=docs_text)
